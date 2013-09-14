@@ -60,7 +60,52 @@ int main(int argc, char **argv)
 static void 
 doFib(int n, int doPrint)
 {
-  
-}
+   pid_t pid;
+   int status;
+   int x=0;
+   
+   /*
+   if(n<1 || n>13)
+   {
+       printf("Error: argument has to be from 1 to 13.\n");
+       return;
+   }
+   */
+   if(n <= 2)
+   {
+       printf("Base case: %d\n",n-1);
+       exit(n-1); 
+   }
+   else
+   {
+   if((pid = fork())== 0) //child
+   {
+         if(doPrint)
+         {
+             printf("child pid on create: %d\n",pid);
+         }
+        
+         doFib(n-1,doPrint);
+//         doFib(n-2,doPrint);
+         exit(n);
+       
+   }
+//   else
+   {
+   //parent
+       printf("Parent pid: %d\n", pid);
+       pid_t child_pid = waitpid(pid, &status, 0);
+       
+       if (WIFEXITED(status))
+       {
+            x += WEXITSTATUS(status);
+            printf("child pid after wait: %d pid: %d\n",x, child_pid);
+            exit(x);
+       }
+       
+   }
 
+   }
+    
+}
 
