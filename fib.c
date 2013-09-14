@@ -64,7 +64,7 @@ static void doFib(int n, int doPrint)
    pid_t pid2;
    int status1;
    int status2;
-   int x=0;
+   int x = 0;
 
    if(n <= 1)
    {
@@ -72,29 +72,20 @@ static void doFib(int n, int doPrint)
        {
          printf("%d\n",n);
        }
-       x=n;
+       x = n;
        exit(x); 
    
    }
 
      //child1
-     if((pid1 = fork())==0)
-     {
-         if(doPrint)
-         {
-             // printf("pid: %d\n, n:%d\n ",getpid(),n);
-         }
-        
+     if((pid1 = fork()) == 0)
+     {  
          doFib(n-1,0);
          exit(x);
      }
       //child 2
-      if((pid2 = fork())==0)
-      {  
-          if(doPrint)
-          {      
-             // printf("pid: %d\n, n:%d\n ",getpid(),n);
-          }
+      if((pid2 = fork()) == 0)
+      {
          doFib(n-2,0);
          exit(x);
       }
@@ -102,9 +93,9 @@ static void doFib(int n, int doPrint)
      //parent
      waitpid(pid1,&status1,0);
      waitpid(pid2,&status2,0);
-     if(WIFEXITED(status1)&&WIFEXITED(status2))
+     if(WIFEXITED(status1) && WIFEXITED(status2))
      {
-         x = WEXITSTATUS(status1)+WEXITSTATUS(status2);
+         x = WEXITSTATUS(status1) + WEXITSTATUS(status2);
          if(doPrint)
          {
            printf("%d\n",x);
