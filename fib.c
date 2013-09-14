@@ -29,6 +29,7 @@ int main(int argc, char **argv)
   int arg;
   int print;
 
+
   if(argc != 2){
     fprintf(stderr, "Usage: fib <num>\n");
     exit(-1);
@@ -59,44 +60,56 @@ int main(int argc, char **argv)
  */
 static void doFib(int n, int doPrint)
 {
-   pid_t pid;
-   int status;
+   pid_t pid1;
+   pid_t pid2;
+   int status1;
+   int status2;
    int x=0;
-   if(n<1 || n>13)
+
+   if(n <= 1)
    {
-       printf("Error: argument has to be from 1 to 13.\n");
-       return;
+       if(doPrint)
+       {
+         printf("%d\n",n);
+       }
+       x=n;
+       exit(x); 
+   
    }
-   if(n <= 2)
-   {
-       printf("%d\n",n-1);
-       exit(n-1); 
-   }
-   //child
-   if(n > 2)
-   {
-     if((pid = fork())==0)
+
+     //child1
+     if((pid1 = fork())==0)
      {
          if(doPrint)
          {
-              printf("pid: %d\n, n:%d\n ",getpid(),n);
+             // printf("pid: %d\n, n:%d\n ",getpid(),n);
          }
         
-         doFib(n-1,doPrint);
-         doFib(n-2,doPrint);
-         exit(n);
-       
-      }
-    }
-   //parent
-   else
-   {
-      waitpid(-1,&status,0);
-     if(WIFEXITED(status))
-     {
-         x += WEXITSTATUS(status);
-         printf("%d\n",x);                                                              
+         doFib(n-1,0);
+         exit(x);
      }
-   }
-
+      //child 2
+      if((pid2 = fork())==0)
+      {  
+          if(doPrint)
+          {      
+             // printf("pid: %d\n, n:%d\n ",getpid(),n);
+          }
+         doFib(n-2,0);
+         exit(x);
+      }
+  
+     //parent
+     waitpid(pid1,&status1,0);
+     waitpid(pid2,&status2,0);
+     if(WIFEXITED(status1)&&WIFEXITED(status2))
+     {
+         x = WEXITSTATUS(status1)+WEXITSTATUS(status2);
+         if(doPrint)
+         {
+           printf("%d\n",x);
+         }
+         exit(x);                                                              
+     }
+ 
 }
