@@ -9,5 +9,7 @@
 
 int main(int argc, char **argv)
 {
+    pid_t pid = atoi(argv[1]);
+  kill(pid,SIGUSR1);
   return 0;
 }
