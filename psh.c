@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    char **cargv = calloc(50, sizeof(char*));
+    char **cargv = calloc(MAXARGS, sizeof(char*));
     char *temp = strtok(cmdline," \n");
     int i = 0;
     pid_t pid;
