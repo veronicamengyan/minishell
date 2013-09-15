@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -123,7 +124,97 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    return;
+    char **cargv = calloc(MAXARGS, sizeof(char*));
+    char *temp = strtok(cmdline," \n");
+    int i = 0;
+    int bg = 0;
+    pid_t pid;
+
+    initjobs(jobs);
+
+    while(temp != NULL && i <= 49)
+    {
+        cargv[i] = calloc(strlen(temp),sizeof(char));
+        strcpy(cargv[i],temp);
+        i++;
+        temp = strtok(NULL," \n");
+    }
+    if (cargv[0] == NULL || i == 0)
+        return;
+
+    if (strcmp(cargv[i-1], "&") == 0)
+    {
+        cargv[i-1] = NULL;
+        free(cargv[i-1]);
+        i--;
+        bg = 1;
+    }
+
+    
+    // buildin command
+    // quit, jobs, bg, fg
+    int test;
+    if((test=builtin_cmd(cargv)) == 1)
+    {
+        if (strcmp(cargv[0], "quit") == 0)
+        {
+            int j;
+            for(j = 0;j < i;j++)
+            {
+               free(cargv[j]);
+            }
+            free(cargv);
+            printf("quit\n");
+            exit(0);
+        }
+        if (strcmp(cargv[0], "fg") == 0 || strcmp(cargv[0], "bg") == 0)
+        {
+            do_bgfg(cargv);
+        }
+    }
+    else //system process
+    // execute files from users
+    //child & parent processes
+    {
+        //child
+       if((pid = fork()) == 0)
+       {
+           addjob(jobs, getpid(), UNDEF, cmdline);
+
+          if(execve(cargv[0],cargv,environ) < 0)
+          {
+              app_error("Command not found.\n");
+              exit(0);
+          }
+          struct job_t *temp = getjobpid(jobs, getpid());
+          temp->state = FG;
+
+          if (bg)
+              do_bgfg(cargv);
+
+        }
+        //parent process
+        else
+        {
+            int status;
+            if(waitpid(pid,&status,0) < 0)
+                   unix_error("waitfg:waitpid error");
+            else
+            {
+               // printf("%d",pid);
+            }
+        }
+
+        //free later;
+       int j;
+       for(j = 0;j < i;j++)
+       {
+            free(cargv[j]);
+       }
+       free(cargv);
+    }
+
+   return;
 }
 
 
@@ -135,15 +226,106 @@ void eval(char *cmdline)
  */
 int builtin_cmd(char **argv) 
 {
+    /*
+    int i = 0;
+   while( argv[i] != NULL)
+    {
+       i++;
+    }
+    */
+
+    if(strcmp(argv[0],"quit") == 0 || strcmp(argv[0],"jobs") == 0 || strcmp(argv[0],"bg") == 0 || strcmp(argv[0],"fg") == 0)
+    {
+       return 1;   
+    }
     return 0;     /* not a builtin command */
+}
+
+/* 
+ * checkDigits - checks if the input string is composed of digits only 
+ * returns 1 is contains only digits, 0 otherwise
+ */
+int checkDigits(char *str, int index)
+{
+     int i;
+     for (i = index; i < strlen(str); i++)
+     {
+         if (!isdigit(str[i]))
+             return 0;
+     }
+     return 1;
+}
+
+void change_state(char **argv, int state)
+{
+    int num = atoi(++(argv[1]));
+    struct job_t *temp = NULL;
+    if (argv[1] == NULL)
+    {
+        if (argv[1][0] == '%' && checkDigits(argv[1], 1)) //jobid
+        {
+            num = atoi(++(argv[1]));
+            temp = getjobjid(jobs, num);
+        }
+        else if (argv[1][0] != '%' && checkDigits(argv[1], 0)) // process id
+        {
+            num = atoi(argv[1]);
+            temp = getjobpid(jobs, num);
+        }
+        if (temp == NULL) //invalid
+        {
+            app_error("Invalid job id or process id");
+        }
+
+        if(state)
+            temp->state = BG; 
+        else
+        {
+            temp->state = FG;
+            waitfg(getpid());
+        }
+    }
+    else //invalid
+    {
+        app_error("Invalid job id or process id");
+    }
 }
 
 /* 
  * do_bgfg - Execute the builtin bg and fg commands
  */
 void do_bgfg(char **argv) 
-{
-    return;
+{        
+    if(strcmp(argv[0],"bg") == 0)
+        change_state(argv, 1);
+    else if (strcmp(argv[0],"fg") == 0)
+        change_state(argv, 0);
+
+      
+    /*
+    int status;
+    if(strcmp(argv[0],"bg") == 0)
+    {
+        if(waitpid(-1,&status,WNOHANG) < 0)
+               unix_error("waitbg: waitpid error");
+
+        if (WIFEXITED(status))
+        {
+             if(Signal(SIGCHLD,sigchld_handler) == SIG_ERR)
+                 unix_error("signal error");
+        }
+    }
+    else if (strcmp(argv[0],"fg") == 0)
+    {
+        if(waitpid(-1,&status,0) < 0)
+               unix_error("waitfg: waitpid error");
+        else
+        {
+           // Signal(
+        }
+
+    }
+    */
 }
 
 /* 
@@ -151,6 +333,16 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
+    struct job_t *temp = getjobpid(jobs, pid);
+    struct timespec time1, time2;
+    time1.tv_sec = 0;
+    time1.tv_nsec = 100;
+
+    while (temp->state != FG)
+    {
+        Signal(SIGCHLD, sigchld_handler);
+        nanosleep(&time1,&time2);
+    }
     return;
 }
 
@@ -167,6 +359,29 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
+    int status;
+    struct job_t *temp; 
+    pid_t pid;
+    do
+    {
+        pid = waitpid(-1,&status,WNOHANG|WUNTRACED);
+        if (WIFEXITED(status))
+        {
+            deletejob(jobs,pid);
+        }
+        else if (WIFSTOPPED(status))
+        {
+           temp = getjobpid(jobs, getpid());
+           temp->state = ST;
+           printf("Job [%d] (%d) stopped by signal %d\n", pid2jid(jobs,pid), pid, WSTOPSIG(status));
+        }
+        else if (WIFSIGNALED(status))
+        {
+            printf("Job [%d] (%d) terminated by signal %d\n", pid2jid(jobs,pid), pid, WTERMSIG(status));
+            deletejob(jobs,pid);
+        }
+    }
+    while(pid > 0);
     return;
 }
 
