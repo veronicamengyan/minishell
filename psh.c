@@ -1,7 +1,11 @@
 /* 
  * psh - A prototype tiny shell program with job control
  * 
- * <Put your name and login ID here>
+ * Name: Sharon Hom
+ * Login ID: sharon
+ *
+ * Name: Meng Yan
+ * Login ID: veronica
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,7 +93,7 @@ int main(int argc, char **argv)
 	eval(cmdline);
 	fflush(stdout);
 	fflush(stdout);
-    } 
+    }
 
     exit(0); /* control never reaches here */
 }
@@ -104,18 +108,83 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    return;
+    char **cargv = calloc(50, sizeof(char*));
+    char *temp = strtok(cmdline," \n");
+    int i = 0;
+    pid_t pid;
+    while(temp != NULL && i <= 49)
+    {
+        cargv[i] = calloc(strlen(temp),sizeof(char));
+        strcpy(cargv[i],temp);
+        i++;
+        temp = strtok(NULL," \n");
+    }
+    
+    // buildin command
+    int test;
+    if((test=builtin_cmd(cargv)) == 1)
+    {
+        int j;
+        for(j = 0;j < i;j++)
+        {
+           free(cargv[j]);
+        }
+        free(cargv);
+        exit(0);
+    }
+    //free later;
+
+    // execute files from users
+    //child process
+    if((pid = fork()) == 0)
+    {
+       if(execve(cargv[0],cargv,environ) < 0)
+       {
+           app_error("Command not found.\n");
+           exit(0);
+       }
+    }
+
+    //parent process
+    else
+    {
+        int status;
+        if(waitpid(pid,&status,0) < 0)
+               unix_error("waitfg:waitpid error");
+        else
+        {
+           // printf("%d",pid);
+        }
+    }
+   int j;
+   for(j = 0;j < i;j++)
+   {
+        free(cargv[j]);
+   }
+   free(cargv);
+
+   return;
+
 }
 
 
 /* 
- * builtin_cmd - If the user has typed a built-in command then execute
+ * builtin_cmd - If the user has typed a built-in command then execute                       
  *    it immediately. 
  * Return 1 if a builtin command was executed; return 0
  * if the argument passed in is *not* a builtin command.
  */
 int builtin_cmd(char **argv) 
 {
+    int i = 0;
+   while( argv[i] != NULL)
+    {
+       i++;
+    }
+    if(strcmp(argv[0],"quit") == 0)
+    {
+       return 1;   
+    }
     return 0;     /* not a builtin command */
 }
 
