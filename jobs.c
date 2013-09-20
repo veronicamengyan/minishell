@@ -157,6 +157,26 @@ void listjobs(struct job_t *jobs)
 	}
     }
 }
+
+/* List all background jobs */
+void listBGjobs(struct job_t *jobs)
+{
+    int i;
+    
+    for (i = 0; i < MAXJOBS; i++) 
+    {
+	if (jobs[i].pid != 0 && jobs[i].state == BG) 
+    {
+        char *temp = malloc(strlen(jobs[i].cmdline)*sizeof(char));
+        strcpy(temp, jobs[i].cmdline);
+        char *command = strtok(temp," \n");
+
+	    printf("[%d] (%d) ", jobs[i].jid, jobs[i].pid);
+	    //printf("Running %s &\n", command);
+	    printf("Running %s", jobs[i].cmdline);
+	}
+    }
+}
 /******************************
  * end job list helper routines
  ******************************/
