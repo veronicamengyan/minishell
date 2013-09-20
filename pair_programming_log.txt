@@ -1,1 +1,95 @@
- 
+9/10, 7:00p - 12:00a Veronica and Sharon, 5 hours
+Driver Order and Time Length:
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+
+9/12, 5:00p - 11:00p Veronica and Sharon, 6 hours
+Driver Order and Time Length:
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+
+9/15, 1:00p - 7:00p Veronica and Sharon, 6 hours
+Driver Order and Time Length:
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+
+9/18, 5:00p - 11:00p Veronica and Sharon, 6 hours
+Driver Order and Time Length:
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+
+9/19, 5:00p - 3:00a Veronica and Sharon, 10 hours
+Driver Order and Time Length:
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+
+9/20, 1:00p - 7:00p Veronica and Sharon, 6 hours
+Driver Order and Time Length:
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
+Veronica, 30 minutes
+Sharon, 30 minutes
