@@ -26,13 +26,13 @@ handle: handle.o util.o
 ##################
 # Handin your work
 ##################
-TAID = "tw7877"
+TAID = "benbb"
 
 turnin.tar: clean
 	tar cf turnin.tar `find . -type f | grep -v '^\.*$$' | grep -v '/CVS/' | grep -v '/\.svn/' | grep -v '/\.git/' | grep -v 'lab[0-9].*\.tar\.gz' | grep -v '/\~/' | grep -v 'mshref' | grep -v '/\.txt' | grep -v '/\.pl' |grep -v '/\.tar/'` 
 
 TURNIN := /lusr/bin/turnin
-GRADER := tw7877
+GRADER := benbb
 LAB1_NAME := shell
 
 turnin: turnin.tar
