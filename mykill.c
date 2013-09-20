@@ -13,6 +13,7 @@
  */
 int main(int argc, char **argv)
 {
+    // Veronica driving now
     pid_t pid = atoi(argv[1]);
     kill(pid,SIGUSR1);
     return 0;

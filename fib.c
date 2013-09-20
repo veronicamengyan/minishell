@@ -64,6 +64,7 @@ int main(int argc, char **argv)
  */
 static void doFib(int n, int doPrint)
 {
+   // Veronica driving now
    pid_t pid1;
    pid_t pid2;
    int status1;

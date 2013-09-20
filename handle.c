@@ -21,6 +21,7 @@ void handler2(int sig);
  */
 int main(int argc, char **argv)
 {
+  // Veronica driving now
   struct timespec time1, time2;
   time1.tv_sec = 1;
   time1.tv_nsec = 0;
@@ -33,6 +34,7 @@ int main(int argc, char **argv)
      {
          unix_error("signal error");
      }
+     // Sharon driving now
      if(Signal(SIGUSR1,handler2)== SIG_ERR)
      {
          unix_error("signal error");
@@ -51,6 +53,7 @@ int main(int argc, char **argv)
  */
  void handler(int sig)
  {
+    // Veronica driving now
     ssize_t bytes;
     const int STDOUT = 1;
     bytes = write(STDOUT, "Nice try.\n",10);
@@ -65,6 +68,7 @@ int main(int argc, char **argv)
  */
 void handler2(int sig)
 {
+   // Sharon driving now
    ssize_t bytes;
    const int STDOUT = 1;
    bytes =  write(STDOUT, "exiting\n",8);

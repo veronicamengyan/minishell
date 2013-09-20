@@ -108,6 +108,7 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+    // Sharon driving now
     char *cargv[MAXARGS];
     pid_t pid;
     
@@ -136,6 +137,7 @@ void eval(char *cmdline)
     //parent process
     else
     {
+        // Veronica driving now
         int status;
         if(waitpid(pid,&status,0) < 0)
                unix_error("waitfg:waitpid error");
@@ -154,6 +156,7 @@ void eval(char *cmdline)
  */
 int builtin_cmd(char **argv) 
 {
+    // Sharon driving now
     if(strcmp(argv[0],"quit") == 0)
     {
         return 1;

@@ -126,6 +126,7 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+    // Sharon driving now
     char *cargv[MAXARGS];
     pid_t pid;
     sigset_t mask;
@@ -153,7 +154,7 @@ void eval(char *cmdline)
            {
                setpgid(0,0);
            }
-
+          // Veronica driving now
           sigprocmask(SIG_UNBLOCK, &mask, NULL);
           if(execve(cargv[0],cargv,environ) < 0)
           {
@@ -182,6 +183,7 @@ void eval(char *cmdline)
       }
       else
       {
+         // Sharon driving now
          addjob(jobs, pid, FG, cmdline);
          sigprocmask(SIG_UNBLOCK, &mask, NULL);
          waitfg(pid);
@@ -201,6 +203,7 @@ void eval(char *cmdline)
  */
 int builtin_cmd(char **argv) 
 {
+    // Veronica driving now
     if (strcmp(cargv[0], "quit") == 0)
     {
        exit(0);
@@ -225,6 +228,7 @@ int builtin_cmd(char **argv)
  */
 int checkDigits(char *str, int index)
 {
+     // Sharon driving now
      int i;
      for (i = index; i < strlen(str); i++)
      {
@@ -241,6 +245,7 @@ int checkDigits(char *str, int index)
  */
 void change_state(char **argv, int s)
 {
+    // Veronica driving now
     int num = 0;
     struct job_t *temp = NULL;
     
@@ -267,6 +272,7 @@ void change_state(char **argv, int s)
         }
         else if (argv[1][0] != '%') // process id
         {
+            // Sharon driving now
             if (checkDigits(argv[1],0) == 0)
             {
                 if (s)
@@ -300,6 +306,7 @@ void change_state(char **argv, int s)
      }
     else //invalid
     {
+        // Veronica driving now
         if (s)
             printf("bg");
         else 
@@ -351,6 +358,7 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
+    // Sharon driving now
     int status;
     struct job_t *temp; 
     pid_t pid;
@@ -383,6 +391,7 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
+    // Veronica driving now
     pid_t pidfg = fgpid(jobs);
     kill(-pidfg, SIGINT);
     return;
