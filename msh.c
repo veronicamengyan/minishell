@@ -53,7 +53,7 @@ void sigquit_handler(int sig);
  */
 int main(int argc, char **argv) 
 {
-    printf("beginning");
+//    printf("beginning");
     //fprintf(stdout,"hello?");
     char c;
     char cmdline[MAXLINE];
@@ -92,11 +92,11 @@ int main(int argc, char **argv)
 
     /* Initialize the job list */
     initjobs(jobs);
-    printf("before 2");
+//    printf("before 2");
     /* Execute the shell's read/eval loop */
     while (1) {
 
-    printf("before 3");
+//    printf("before 3");
 	/* Read command line */
 	if (emit_prompt) {
 	    printf("%s", prompt);
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 	    fflush(stdout);
 	    exit(0);
 	}
-    printf("before 1");
+//    printf("before 1");
 	/* Evaluate the command line */
     eval(cmdline);
     //printf("while loop\n");
@@ -132,16 +132,21 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    char **cargv = calloc(MAXARGS, sizeof(char*));
-    char *modified = calloc(MAXLINE, sizeof(char*));
-    strcpy(modified, cmdline);
-    char *temp = strtok(modified," \n");
-    int i = 0;
-    int bg = 0;
+    char *cargv[MAXARGS];
+//    char **cargv = calloc(MAXARGS, sizeof(char*));
+//    char *modified = calloc(MAXLINE, sizeof(char*));
+//    strcpy(modified, cmdline);
+//    char *temp = strtok(modified," \n");
+//    int i = 0;
     pid_t pid;
     sigset_t mask;
 
-    printf("step1");
+    int bg = parseline(cmdline, cargv);
+    if (cargv[0] == NULL)
+        return;
+
+//    printf("step1");
+/*
     while(temp != NULL && i < MAXARGS)
     {
         cargv[i] = calloc(strlen(temp),sizeof(char));
@@ -160,18 +165,21 @@ void eval(char *cmdline)
         i--;
         bg = 1;
     }
-    printf("step2");
+    */
+//    printf("step2");
     
     // buildin command
     // quit, jobs, bg, fg
     if (strcmp(cargv[0], "quit") == 0)
     {
+        /*
         int j;
         for(j = 0;j < i;j++)
         {
            free(cargv[j]);
         }
         free(cargv);
+        */
         exit(0);
     }
 
@@ -190,14 +198,14 @@ void eval(char *cmdline)
             
         //child
        //fflush(stdout);
-       printf("step3");
+//       printf("step3");
        if((pid = fork()) == 0)
        {
-          printf("step4");
+//          printf("step4");
         //  printf("HI I am a child"); 
           // printf("Here is my pid: %d",getpid());
            //set
-           if(bg)
+ //          if(bg)
            {
                setpgid(0,0);
            }
@@ -232,7 +240,7 @@ void eval(char *cmdline)
       }
       else
       {
-         printf("step5");
+//         printf("step5");
          addjob(jobs, pid, FG, cmdline);
          sigprocmask(SIG_UNBLOCK, &mask, NULL);
          waitfg(pid);
@@ -259,7 +267,8 @@ int builtin_cmd(char **argv)
     }
     else if (strcmp(argv[0], "jobs") == 0)
     {
-        listBGjobs(jobs);
+//        listBGjobs(jobs);
+        listjobs(jobs);
         return 1;
     }
 
@@ -297,21 +306,30 @@ int checkDigits(char *str, int index)
 /**
  * changes the state of the job from foreground to background or vice versa
  */
-void change_state(char **argv, int state)
+void change_state(char **argv, int s)
 {
-    printf("change state\n");
-    int num = atoi(++(argv[1]));
+//    printf("change state\n");
+    //int num = atoi(++(argv[1]));
+    int num = 0;
+//    printf("num: %d\n", num);
     struct job_t *temp = NULL;
-    if (argv[1] == NULL)
+    /*
+    printf("argv[0]: %s\n", argv[0]);
+    printf("argv[1]: %s\n", argv[1]);
+    printf("argv[2]: %s\n", argv[2]);
+    */
+    if (argv[2] == NULL)
     {
         if (argv[1][0] == '%' && checkDigits(argv[1], 1)) //jobid
         {
             num = atoi(++(argv[1]));
+//            printf("jobid: %d\n", num);
             temp = getjobjid(jobs, num);
         }
         else if (argv[1][0] != '%' && checkDigits(argv[1], 0)) // process id
         {
             num = atoi(argv[1]);
+//            printf("pidid: %d\n", num);
             temp = getjobpid(jobs, num);
         }
         if (temp == NULL) //invalid
@@ -319,16 +337,22 @@ void change_state(char **argv, int state)
             app_error("Invalid job id or process id");
         }
 
-        if(state)
+//        printf("Went through initial\n");
+        kill(temp->pid,SIGCONT);
+        if(s)
         {
+//            printf("Went into bg\n");
             temp->state = BG; 
+            printf("[%d] (%d) %s ", temp->jid, temp->pid, temp->cmdline);
         }
         else
         {
+//            printf("Went into fg\n");
             temp->state = FG;
-            waitfg(getpid());
+            waitfg(temp->pid);
         }
 
+        /*
         printf("[%d] (%d) ", temp->jid, temp->pid);
         int i = 0;
         while (argv[i] != NULL)
@@ -336,11 +360,12 @@ void change_state(char **argv, int state)
             printf("%s ", argv[i]);
         }
         printf("\n");
+        */
 
     }
     else //invalid
     {
-        app_error("Invalid job id or process id");
+        app_error("Invalid job id or process id at end");
     }
 }
 
@@ -354,7 +379,7 @@ void do_bgfg(char **argv)
     else if (strcmp(argv[0],"fg") == 0)
         change_state(argv, 0);
 
-    printf("do_bgfg\n");
+   // printf("do_bgfg\n");
 
       
     /*
@@ -393,7 +418,7 @@ void waitfg(pid_t pid)
     //struct job_t *temp = getjobpid(jobs,pid);
     struct timespec time1, time2;
     time1.tv_sec = 0;
-    time1.tv_nsec = 10;
+    time1.tv_nsec = 1;
 
     //Signal(SIGCHLD, sigchld_handler);
 
@@ -438,7 +463,7 @@ void sigchld_handler(int sig)
         }
         else if (WIFSTOPPED(status))
         {
-           temp = getjobpid(jobs, getpid());
+           temp = getjobpid(jobs, pid);
            temp->state = ST;
            printf("Job [%d] (%d) stopped by signal %d\n", pid2jid(jobs,pid), pid, WSTOPSIG(status));
         }
@@ -461,18 +486,19 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
-    printf("step6");
-    pid_t pid;
+//    printf("step6");
+//    pid_t pid;
     pid_t pidfg = fgpid(jobs);
 //    struct job_t *temp; 
     int status;
 //    printf("step7");
-    kill(pidfg, SIGINT);
-    if(getpid()==pidfg)
+    kill(-pidfg, SIGINT);
+    /*if(getpid()==pidfg)
     {
         deletejob(jobs,pidfg);
         return;
     }
+    */
    /* while ((pid = waitpid(fgpid(jobs),&status,0)) > 0)
     {
         if (WIFEXITED(status))
@@ -511,14 +537,17 @@ void sigtstp_handler(int sig)
     int status;
 
 
-   kill(pidfg, SIGTSTP);
+
+   kill(-pidfg, SIGTSTP);
+   /*
    if(getpid()==pidfg)
    {
       temp = getjobpid(jobs,pidfg); 
       temp->state = ST;   
-      sleep(10);          
+//      sleep(10);          
    }
 
+*/
     /*while ((pid = waitpid(pidfg,&status,WUNTRACED)) > 0)
     {
         if (WIFEXITED(status))
