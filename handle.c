@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include "util.h"
 
+void handler(int sig);
+void handler2(int sig);
 
 /*
  * First, print out the process ID of this process.
@@ -17,8 +19,6 @@
  * Finally, loop forever, printing "Still here\n" once every
  * second.
  */
-void handler(int sig);
-void handler2(int sig);
 int main(int argc, char **argv)
 {
   struct timespec time1, time2;
@@ -43,6 +43,12 @@ int main(int argc, char **argv)
      return 0;
 }
 
+/*
+ * This function catches SIGINT signals 
+ * and prints "Nice try" everytime it 
+ * receives the SIGINT signal. It prevent the
+ * program from being terminated by SIGINT signal.
+ */
  void handler(int sig)
  {
     ssize_t bytes;
@@ -52,6 +58,11 @@ int main(int argc, char **argv)
         exit(-999);
  }
 
+/*
+ * This function catches SIGUSR1 signals, 
+ * prints "exiting" and exits. 
+ *
+ */
 void handler2(int sig)
 {
    ssize_t bytes;

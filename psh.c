@@ -108,31 +108,19 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
-    char **cargv = calloc(MAXARGS, sizeof(char*));
-    char *temp = strtok(cmdline," \n");
-    int i = 0;
+    char *cargv[MAXARGS];
     pid_t pid;
-    while(temp != NULL && i <= 49)
-    {
-        cargv[i] = calloc(strlen(temp),sizeof(char));
-        strcpy(cargv[i],temp);
-        i++;
-        temp = strtok(NULL," \n");
-    }
     
-    // buildin command
+    parseline(cmdline, cargv);
+    if (cargv[0] == NULL)
+        return;
+
+    // buildin command - quit
     int test;
     if((test=builtin_cmd(cargv)) == 1)
     {
-        int j;
-        for(j = 0;j < i;j++)
-        {
-           free(cargv[j]);
-        }
-        free(cargv);
         exit(0);
     }
-    //free later;
 
     // execute files from users
     //child process
@@ -151,17 +139,7 @@ void eval(char *cmdline)
         int status;
         if(waitpid(pid,&status,0) < 0)
                unix_error("waitfg:waitpid error");
-        else
-        {
-           // printf("%d",pid);
-        }
     }
-   int j;
-   for(j = 0;j < i;j++)
-   {
-        free(cargv[j]);
-   }
-   free(cargv);
 
    return;
 
@@ -176,14 +154,9 @@ void eval(char *cmdline)
  */
 int builtin_cmd(char **argv) 
 {
-    int i = 0;
-   while( argv[i] != NULL)
-    {
-       i++;
-    }
     if(strcmp(argv[0],"quit") == 0)
     {
-       return 1;   
+        return 1;
     }
     return 0;     /* not a builtin command */
 }
