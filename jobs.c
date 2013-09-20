@@ -167,12 +167,8 @@ void listBGjobs(struct job_t *jobs)
     {
 	if (jobs[i].pid != 0 && jobs[i].state == BG) 
     {
-        char *temp = malloc(strlen(jobs[i].cmdline)*sizeof(char));
-        strcpy(temp, jobs[i].cmdline);
-        char *command = strtok(temp," \n");
 
 	    printf("[%d] (%d) ", jobs[i].jid, jobs[i].pid);
-	    //printf("Running %s &\n", command);
 	    printf("Running %s", jobs[i].cmdline);
 	}
     }

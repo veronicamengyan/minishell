@@ -23,7 +23,11 @@ unix_error(char *msg)
     exit(1);
 }
 
-
+/*
+ *  This main function checks the input of fibonacci
+ *  from the user and prints the nth fibonacci number
+ *  for the user.
+ */
 int main(int argc, char **argv)
 {
   int arg;

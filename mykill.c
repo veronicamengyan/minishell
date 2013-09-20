@@ -7,9 +7,13 @@
 #include <unistd.h>
 
 
+/*
+ * This program sends SIGUSR1 to
+ * the specified process ID.
+ */
 int main(int argc, char **argv)
 {
     pid_t pid = atoi(argv[1]);
-  kill(pid,SIGUSR1);
-  return 0;
+    kill(pid,SIGUSR1);
+    return 0;
 }
