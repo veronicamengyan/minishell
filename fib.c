@@ -33,7 +33,6 @@ int main(int argc, char **argv)
   int arg;
   int print;
 
-
   if(argc != 2){
     fprintf(stderr, "Usage: fib <num>\n");
     exit(-1);

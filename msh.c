@@ -204,7 +204,7 @@ void eval(char *cmdline)
 int builtin_cmd(char **argv) 
 {
     // Veronica driving now
-    if (strcmp(cargv[0], "quit") == 0)
+    if (strcmp(argv[0], "quit") == 0)
     {
        exit(0);
     }
